@@ -15,7 +15,7 @@ const AntremanlarPage = () => {
     grup: "",
   });
 
-  const [workouts] = useState([
+  const [workouts, setWorkouts] = useState([
     {
       id: 1,
       yilBrans: "2024/Futbol",
@@ -122,7 +122,9 @@ const AntremanlarPage = () => {
                 Yeni Antrenman Ekle
               </button>*/}
               <button onClick={() => setIsModalOpen(true)}>Yeni Antrenman Ekle</button>
-              {isModalOpen && <YeniAntrenmanModal onClose={() => setIsModalOpen(false)} />}
+              {isModalOpen && <YeniAntrenmanModal onClose={() => setIsModalOpen(false)} onSubmit={function (newWorkout: { id: number; yilBrans: string; adi: string; saat: string; saha: string; antrenor: string; periyot: string; }): void {
+              throw new Error("Function not implemented.");
+            } } />}
             </div>
 
             <table className="w-full table-auto border-collapse">

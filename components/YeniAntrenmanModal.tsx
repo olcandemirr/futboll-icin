@@ -1,49 +1,38 @@
-import { useState } from 'react';
-import { FaTimes } from 'react-icons/fa';
+import { useState } from "react";
+import { FaTimes } from "react-icons/fa";
 
-const YeniAntrenmanModal = ({ onClose }: { onClose: () => void }) => {
-  const [toggleBrans, setToggleBrans] = useState(false);
+const YeniAntrenmanModal = ({ onClose, onSave }: { onClose: () => void; onSave: (data: any) => void }) => {
+  const [selectedBrans, setSelectedBrans] = useState("Futbol");
   const [toggleOdeme, setToggleOdeme] = useState({ aylik: false, tekSeferlik: false });
-  const [toggleSaha, setToggleSaha] = useState(false);
-  const [selectedGrup, setSelectedGrup] = useState<string[]>([]);
-  const [selectedAntrenor, setSelectedAntrenor] = useState<string>('');
-  const [antrenmanYili, setAntrenmanYili] = useState('2024');
-  const [baslangicAyi, setBaslangicAyi] = useState('Ocak');
-  const [antrenmanSaati, setAntrenmanSaati] = useState('17:00');
-  const [bitisSaati, setBitisSaati] = useState('18:00');
-  const [antrenmanUcreti, setAntrenmanUcreti] = useState('');
-  const [odemeTarihi, setOdemeTarihi] = useState('1');
+  const [antrenmanYili, setAntrenmanYili] = useState("2024");
+  const [baslangicAyi, setBaslangicAyi] = useState("Ocak");
+  const [antrenmanSaati, setAntrenmanSaati] = useState("17:00");
+  const [bitisSaati, setBitisSaati] = useState("18:00");
+  const [antrenmanUcreti, setAntrenmanUcreti] = useState("");
+  const [odemeTarihi, setOdemeTarihi] = useState("");
 
-  // Checkbox değişimini yönetmek için fonksiyon
-  const handleCheckboxChange = (grup: string) => {
-    setSelectedGrup((prev) =>
-      prev.includes(grup) ? prev.filter((item) => item !== grup) : [...prev, grup]
-    );
-  };
-
-  // Modal dışına tıklama engelleme
-  const handleModalClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Modal dışına tıklanmasını engelle
-  };
-
-  // Form gönderme
+  // Form gönderme işlemi
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Formu göndermek için buraya işlevsellik ekleyebilirsiniz
-    console.log({
-      toggleBrans,
-      toggleOdeme,
-      toggleSaha,
-      selectedGrup,
-      selectedAntrenor,
-      antrenmanYili,
-      baslangicAyi,
-      antrenmanSaati,
-      bitisSaati,
-      antrenmanUcreti,
+
+    // Validation
+    if (!antrenmanUcreti || parseInt(antrenmanUcreti) < 0) {
+      alert("Lütfen geçerli bir ücret giriniz!");
+      return;
+    }
+
+    // Form verilerini kaydetme
+    const antrenmanData = {
+      brans: selectedBrans,
+      odeme: toggleOdeme,
+      yil: antrenmanYili,
+      ay: baslangicAyi,
+      saat: `${antrenmanSaati} - ${bitisSaati}`,
+      ucret: antrenmanUcreti,
       odemeTarihi,
-    });
-    // Form gönderildikten sonra modal'ı kapatma
+    };
+
+    onSave(antrenmanData);
     onClose();
   };
 
@@ -54,7 +43,7 @@ const YeniAntrenmanModal = ({ onClose }: { onClose: () => void }) => {
     >
       <div
         className="bg-white w-full max-w-4xl p-6 rounded-lg shadow-lg"
-        onClick={handleModalClick} // Modal içine tıklanarak kapanmaz
+        onClick={(e) => e.stopPropagation()} // Modal içine tıklanarak kapanmaz
       >
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold">Yeni Antrenman Ekle</h2>
@@ -65,21 +54,20 @@ const YeniAntrenmanModal = ({ onClose }: { onClose: () => void }) => {
 
         <form onSubmit={handleFormSubmit} className="grid grid-cols-2 gap-4">
           {/* Antrenman Branşı */}
-          <div className="col-span-2 flex items-center justify-between p-4 border rounded">
-            <label htmlFor="antrenmanBrans" className="text-gray-700 font-medium">
+          <div>
+            <label htmlFor="antrenmanBrans" className="block text-gray-700 mb-2">
               Antrenman Branşı
             </label>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input
-                id="antrenmanBrans"
-                type="checkbox"
-                className="sr-only"
-                checked={toggleBrans}
-                onChange={() => setToggleBrans(!toggleBrans)}
-              />
-              <span className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-blue-500"></span>
-              <span className="ml-3 text-sm font-medium">{toggleBrans ? 'Futbol' : ''}</span>
-            </label>
+            <select
+              id="antrenmanBrans"
+              className="border w-full p-2 rounded"
+              value={selectedBrans}
+              onChange={(e) => setSelectedBrans(e.target.value)}
+            >
+              <option value="Futbol">Futbol</option>
+              <option value="Basketbol">Basketbol</option>
+              <option value="Voleybol">Voleybol</option>
+            </select>
           </div>
 
           {/* Yıl ve Ay */}
@@ -137,7 +125,7 @@ const YeniAntrenmanModal = ({ onClose }: { onClose: () => void }) => {
             </div>
           </div>
 
-          {/* Antrenman Tipi */}
+          {/* Ödeme Tipi */}
           <div className="col-span-2 flex flex-col p-4 border rounded">
             <span className="text-gray-700 font-medium mb-2">Antrenman Tipi</span>
             <div className="flex items-center gap-4">
