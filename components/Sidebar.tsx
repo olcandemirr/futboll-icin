@@ -10,7 +10,7 @@ const Sidebar = () => {
       <div className="flex flex-col items-center py-6">
         
         <div className="w-16 h-16 bg-gray-500 rounded-full mb-2" />
-        <p className="text-sm text-center">AD Soyad Gelecek</p>
+        <p className="text-sm text-center">Behçet Arım</p>
       </div>
 
       {/* Menü */}

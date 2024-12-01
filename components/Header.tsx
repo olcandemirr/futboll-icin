@@ -6,7 +6,7 @@ const Header = () => {
     <header className="bg-[#FCFCF9FF] shadow-md flex items-center justify-between p-4">
       {/* Kulüp Adı */}
       <h1 className="text-2xl font-bold text-center w-full text-gray-800">
-        .............
+      Kulup adı
       </h1>
 
       {/* Çıkış Butonu */}

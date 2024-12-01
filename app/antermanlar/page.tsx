@@ -1,10 +1,9 @@
 "use client";
 
-import Sidebar from "@/components/Sidebar";
-import Header from "@/components/Header";
+
 import { useState } from "react";
 import YeniAntrenmanModal from "@/components/YeniAntrenmanModal";
-
+ 
 const AntremanlarPage = () => {
   
   const [isModalOpen, setIsModalOpen] = useState(false);

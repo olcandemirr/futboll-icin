@@ -23,7 +23,8 @@ const ProfilPage = () => {
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-2">
             {profil.ad} {profil.soyad}
-          </h1>{/* Kendi Hakkında Kısmı */}
+          </h1>
+          {/* Kendi Hakkında Kısmı */}
           <h3 className="text-lg font-semibold text-gray-700 mt-6">Kendi Hakkında:</h3>
           <p className="text-gray-600 mt-2">{profil.hakkında}</p>
         
