@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-
+import Image from 'next/image';
 const ProfilPage = () => {
   const profil = {
     fotoğraf: "/images/profil.jpg", // Profil fotoğrafı
@@ -14,7 +14,7 @@ const ProfilPage = () => {
     <div className="flex h-full justify-center items-center bg-gray-100">
       <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
         <div className="flex justify-center mb-6">
-          <img
+          <Image
             src={profil.fotoğraf}
             alt="Behçet Tarım"
             className="w-32 h-32 rounded-full border-4 border-gray-300"

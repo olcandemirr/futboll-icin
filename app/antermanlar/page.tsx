@@ -15,7 +15,7 @@ const AntremanlarPage = () => {
     grup: "",
   });
 
-  const [workouts, setWorkouts] = useState([
+  const [workouts] = useState([
     {
       id: 1,
       yilBrans: "2024/Futbol",

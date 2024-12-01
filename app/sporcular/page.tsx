@@ -53,6 +53,10 @@ const SporcularPage = () => {
     setGruplar((prev) => [...prev, { ad: grupAdi, kisiler: secilenKisiler }]);
   };
 
+  const handleGrupSec = (grup: { ad: string; kisiler: string[] }) => {
+    setAktifGrup(grup);
+  };
+
   const handleSmsGonder = () => {
     if (aktifGrup && mesaj.trim() !== "") {
       const telefonlar = aktifGrup.kisiler.map(
@@ -69,31 +73,27 @@ const SporcularPage = () => {
     <div className="flex h-full">
       {/* Sol Sidebar */}
       <aside className="w-64 bg-gray-50 border-r p-4">
-        <h2 className="text-xl font-bold mb-6">Sporcular</h2>
+        <h2 className="text-xl font-bold mb-6">Gruplar</h2>
         <ul className="space-y-4">
-          {["Kayıt", "Ön Kayıt", "Aktif", "Pasif"].map((durumTipi) => (
+          {gruplar.map((grup, index) => (
             <li
-              key={durumTipi}
-              onClick={() => setDurum(durumTipi)}
-              className="flex items-center justify-between hover:bg-gray-100 p-2 rounded cursor-pointer"
+              key={index}
+              onClick={() => handleGrupSec(grup)}
+              className={`flex items-center justify-between hover:bg-gray-100 p-2 rounded cursor-pointer ${
+                aktifGrup?.ad === grup.ad ? "bg-blue-100" : ""
+              }`}
             >
-              <span className="flex items-center gap-2">
-                <span
-                  className={`w-3 h-3 rounded-full ${
-                    durumTipi === "Kayıt"
-                      ? "bg-purple-500"
-                      : durumTipi === "Ön Kayıt"
-                      ? "bg-yellow-500"
-                      : durumTipi === "Aktif"
-                      ? "bg-green-500"
-                      : "bg-red-500"
-                  }`}
-                ></span>
-                <span className="text-sm font-medium">{durumTipi}</span>
-              </span>
+              <span>{grup.ad}</span>
+              <span className="text-sm text-gray-500">{grup.kisiler.length} kişi</span>
             </li>
           ))}
         </ul>
+        <button
+          onClick={() => setIsYeniGrupModalOpen(true)}
+          className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          Yeni Grup Ekle
+        </button>
       </aside>
 
       {/* Sağ İçerik */}
@@ -139,6 +139,20 @@ const SporcularPage = () => {
               )}
             </div>
           ))}
+        </div>
+        <div className="mt-6">
+          <textarea
+            value={mesaj}
+            onChange={(e) => setMesaj(e.target.value)}
+            placeholder="Mesajınızı yazın..."
+            className="border w-full p-2 rounded"
+          />
+          <button
+            onClick={handleSmsGonder}
+            className="mt-2 bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
+          >
+            SMS Gönder
+          </button>
         </div>
       </div>
 
