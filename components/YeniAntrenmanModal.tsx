@@ -1,7 +1,27 @@
 import { useState } from "react";
 import { FaTimes } from "react-icons/fa";
 
-const YeniAntrenmanModal = ({ onClose, onSave }: { onClose: () => void; onSave: (data: any) => void }) => {
+// Veri yapısı için arayüz tanımı
+interface AntrenmanData {
+  brans: string;
+  odeme: {
+    aylik: boolean;
+    tekSeferlik: boolean;
+  };
+  yil: string;
+  ay: string;
+  saat: string;
+  ucret: string;
+  odemeTarihi: string;
+}
+
+const YeniAntrenmanModal = ({
+  onClose,
+  onSave,
+}: {
+  onClose: () => void;
+  onSave: (data: AntrenmanData) => void;
+}) => {
   const [selectedBrans, setSelectedBrans] = useState("Futbol");
   const [toggleOdeme, setToggleOdeme] = useState({ aylik: false, tekSeferlik: false });
   const [antrenmanYili, setAntrenmanYili] = useState("2024");
@@ -11,7 +31,6 @@ const YeniAntrenmanModal = ({ onClose, onSave }: { onClose: () => void; onSave: 
   const [antrenmanUcreti, setAntrenmanUcreti] = useState("");
   const [odemeTarihi, setOdemeTarihi] = useState("");
 
-  // Form gönderme işlemi
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -21,8 +40,8 @@ const YeniAntrenmanModal = ({ onClose, onSave }: { onClose: () => void; onSave: 
       return;
     }
 
-    // Form verilerini kaydetme
-    const antrenmanData = {
+    // Form verilerini oluştur
+    const antrenmanData: AntrenmanData = {
       brans: selectedBrans,
       odeme: toggleOdeme,
       yil: antrenmanYili,
@@ -39,11 +58,11 @@ const YeniAntrenmanModal = ({ onClose, onSave }: { onClose: () => void; onSave: 
   return (
     <div
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      onClick={onClose} // Modal dışına tıklanarak kapanır
+      onClick={onClose}
     >
       <div
         className="bg-white w-full max-w-4xl p-6 rounded-lg shadow-lg"
-        onClick={(e) => e.stopPropagation()} // Modal içine tıklanarak kapanmaz
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold">Yeni Antrenman Ekle</h2>
@@ -53,7 +72,6 @@ const YeniAntrenmanModal = ({ onClose, onSave }: { onClose: () => void; onSave: 
         </div>
 
         <form onSubmit={handleFormSubmit} className="grid grid-cols-2 gap-4">
-          {/* Antrenman Branşı */}
           <div>
             <label htmlFor="antrenmanBrans" className="block text-gray-700 mb-2">
               Antrenman Branşı
@@ -70,7 +88,6 @@ const YeniAntrenmanModal = ({ onClose, onSave }: { onClose: () => void; onSave: 
             </select>
           </div>
 
-          {/* Yıl ve Ay */}
           <div>
             <label htmlFor="antrenmanYili" className="block text-gray-700 mb-2">
               Antrenman Yılı
@@ -85,6 +102,7 @@ const YeniAntrenmanModal = ({ onClose, onSave }: { onClose: () => void; onSave: 
               <option value="2025">2025</option>
             </select>
           </div>
+
           <div>
             <label htmlFor="baslangicAyi" className="block text-gray-700 mb-2">
               Başlangıç Ayı
@@ -102,7 +120,6 @@ const YeniAntrenmanModal = ({ onClose, onSave }: { onClose: () => void; onSave: 
             </select>
           </div>
 
-          {/* Saat */}
           <div>
             <label htmlFor="antrenmanSaati" className="block text-gray-700 mb-2">
               Antrenman Saati
@@ -125,7 +142,6 @@ const YeniAntrenmanModal = ({ onClose, onSave }: { onClose: () => void; onSave: 
             </div>
           </div>
 
-          {/* Ödeme Tipi */}
           <div className="col-span-2 flex flex-col p-4 border rounded">
             <span className="text-gray-700 font-medium mb-2">Antrenman Tipi</span>
             <div className="flex items-center gap-4">
@@ -156,7 +172,6 @@ const YeniAntrenmanModal = ({ onClose, onSave }: { onClose: () => void; onSave: 
             </div>
           </div>
 
-          {/* Ücret ve Tarih */}
           <div>
             <label htmlFor="antrenmanUcreti" className="block text-gray-700 mb-2">
               Antrenman Ücreti - TL
@@ -170,6 +185,7 @@ const YeniAntrenmanModal = ({ onClose, onSave }: { onClose: () => void; onSave: 
               onChange={(e) => setAntrenmanUcreti(e.target.value)}
             />
           </div>
+
           <div>
             <label htmlFor="odemeTarihi" className="block text-gray-700 mb-2">
               Ödeme Tarihi
@@ -183,7 +199,6 @@ const YeniAntrenmanModal = ({ onClose, onSave }: { onClose: () => void; onSave: 
             />
           </div>
 
-          {/* Kaydet Butonu */}
           <div className="mt-4 flex justify-end">
             <button type="submit" className="bg-blue-500 text-white py-2 px-6 rounded">
               Kaydet

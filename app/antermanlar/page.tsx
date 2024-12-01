@@ -1,65 +1,67 @@
-"use client";
-
 import { useState } from "react";
 import YeniAntrenmanModal from "@/components/YeniAntrenmanModal";
 
+interface AntrenmanData {
+  brans: string;
+  odeme: {
+    aylik: boolean;
+    tekSeferlik: boolean;
+  };
+  yil: string;
+  ay: string;
+  saat: string;
+  ucret: string;
+  odemeTarihi: string;
+}
+
 const AntremanlarPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const [filters, setFilters] = useState({
     yil: "",
     brans: "",
     tip: "",
-    grup: "",
   });
 
-  const [workouts, setWorkouts] = useState([
+  const [workouts, setWorkouts] = useState<AntrenmanData[]>([
     {
-      id: 1,
-      yilBrans: "2024/Futbol",
-      adi: "Isınma Antrenmanı",
+      brans: "Futbol",
+      odeme: { aylik: true, tekSeferlik: false },
+      yil: "2024",
+      ay: "Ocak",
       saat: "10:00 - 11:30",
-      saha: "Saha A",
-      antrenor: "Ali Veli",
-      periyot: "Haftalık",
+      ucret: "500",
+      odemeTarihi: "2024-01-10",
     },
     {
-      id: 2,
-      yilBrans: "2024/Basketbol",
-      adi: "Dayanıklılık Antrenmanı",
+      brans: "Basketbol",
+      odeme: { aylik: false, tekSeferlik: true },
+      yil: "2024",
+      ay: "Şubat",
       saat: "14:00 - 15:30",
-      saha: "Saha B",
-      antrenor: "Ayşe Yılmaz",
-      periyot: "Aylık",
+      ucret: "750",
+      odemeTarihi: "2024-02-15",
     },
   ]);
 
   // Yeni antrenman ekleme
-  const handleAddWorkout = (newWorkout: {
-    yilBrans: string;
-    adi: string;
-    saat: string;
-    saha: string;
-    antrenor: string;
-    periyot: string;
-  }) => {
-    setWorkouts((prevWorkouts) => [
-      ...prevWorkouts,
-      { id: prevWorkouts.length + 1, ...newWorkout }, // Yeni antrenman için id oluştur
-    ]);
-    setIsModalOpen(false); // Modal'ı kapat
+  const handleAddWorkout = (newWorkout: AntrenmanData) => {
+    setWorkouts((prevWorkouts) => [...prevWorkouts, newWorkout]);
+    setIsModalOpen(false);
   };
 
   // Filtreleme
   const filteredWorkouts = workouts.filter((workout) => {
-    const matchesYil = filters.yil ? workout.yilBrans.includes(filters.yil) : true;
+    const matchesYil = filters.yil ? workout.yil === filters.yil : true;
     const matchesBrans = filters.brans
-      ? workout.yilBrans.toLowerCase().includes(filters.brans.toLowerCase())
+      ? workout.brans.toLowerCase().includes(filters.brans.toLowerCase())
       : true;
-    const matchesTip = filters.tip ? workout.periyot === filters.tip : true;
-    const matchesGrup = filters.grup ? workout.adi.includes(filters.grup) : true;
+    const matchesTip = filters.tip
+      ? workout.odeme.aylik && filters.tip === "Aylık"
+        ? true
+        : workout.odeme.tekSeferlik && filters.tip === "Tek Seferlik"
+      : true;
 
-    return matchesYil && matchesBrans && matchesTip && matchesGrup;
+    return matchesYil && matchesBrans && matchesTip;
   });
 
   // Filtrelerin güncellenmesi
@@ -73,49 +75,40 @@ const AntremanlarPage = () => {
       <div className="p-6 flex flex-col lg:flex-row">
         {/* Filtreleme Menüsü */}
         <aside className="w-full lg:w-1/4 bg-white p-4 rounded-lg shadow-md">
-          <h2 className="text-lg font-bold mb-4">Filtreleme</h2>
-          <div className="space-y-4">
-            {/* Yıl */}
-            <div>
-              <label className="block text-gray-700 font-medium">Yıl</label>
-              <select
-                name="yil"
-                value={filters.yil}
-                onChange={handleFilterChange}
-                className="w-full border border-gray-300 p-2 rounded-lg"
-              >
-                <option value="">Tümü</option>
-                <option value="2024">2024</option>
-                <option value="2023">2023</option>
-              </select>
-            </div>
-
-            {/* Branş */}
-            <div>
-              <label className="block text-gray-700 font-medium">Branş</label>
-              <input
-                type="text"
-                name="brans"
-                value={filters.brans}
-                onChange={handleFilterChange}
-                placeholder="Branş"
-                className="w-full border border-gray-300 p-2 rounded-lg"
-              />
-            </div>
-
-            {/* Tip */}
-            <div>
-              <label className="block text-gray-700 font-medium">Tipi</label>
-              <div className="space-y-2">
-                <label className="block">
-                  <input type="radio" name="tip" value="Aylık" onChange={handleFilterChange} /> Aylık Ödeme
-                </label>
-                <label className="block">
-                  <input type="radio" name="tip" value="Tek Seferlik" onChange={handleFilterChange} /> Tek Seferlik
-                </label>
-              </div>
-            </div>
-          </div>
+          <h3 className="text-lg font-bold mb-4">Filtreler</h3>
+          <label className="block mb-4">
+            Yıl
+            <input
+              type="text"
+              name="yil"
+              className="w-full mt-1 p-2 border rounded"
+              value={filters.yil}
+              onChange={handleFilterChange}
+            />
+          </label>
+          <label className="block mb-4">
+            Branş
+            <input
+              type="text"
+              name="brans"
+              className="w-full mt-1 p-2 border rounded"
+              value={filters.brans}
+              onChange={handleFilterChange}
+            />
+          </label>
+          <label className="block mb-4">
+            Tip
+            <select
+              name="tip"
+              className="w-full mt-1 p-2 border rounded"
+              value={filters.tip}
+              onChange={handleFilterChange}
+            >
+              <option value="">Hepsi</option>
+              <option value="Aylık">Aylık</option>
+              <option value="Tek Seferlik">Tek Seferlik</option>
+            </select>
+          </label>
         </aside>
 
         {/* Antrenman Listesi */}
@@ -133,23 +126,31 @@ const AntremanlarPage = () => {
           <table className="w-full table-auto border-collapse">
             <thead>
               <tr className="bg-gray-200">
-                <th className="border px-4 py-2">Yıl/Branş</th>
-                <th className="border px-4 py-2">Adı</th>
+                <th className="border px-4 py-2">Branş</th>
+                <th className="border px-4 py-2">Yıl</th>
+                <th className="border px-4 py-2">Ay</th>
                 <th className="border px-4 py-2">Saat</th>
-                <th className="border px-4 py-2">Saha</th>
-                <th className="border px-4 py-2">Antrenör</th>
-                <th className="border px-4 py-2">Periyot</th>
+                <th className="border px-4 py-2">Ücret</th>
+                <th className="border px-4 py-2">Ödeme Tipi</th>
+                <th className="border px-4 py-2">Ödeme Tarihi</th>
               </tr>
             </thead>
             <tbody>
-              {filteredWorkouts.map((workout) => (
-                <tr key={workout.id}>
-                  <td className="border px-4 py-2">{workout.yilBrans}</td>
-                  <td className="border px-4 py-2">{workout.adi}</td>
+              {filteredWorkouts.map((workout, index) => (
+                <tr key={index}>
+                  <td className="border px-4 py-2">{workout.brans}</td>
+                  <td className="border px-4 py-2">{workout.yil}</td>
+                  <td className="border px-4 py-2">{workout.ay}</td>
                   <td className="border px-4 py-2">{workout.saat}</td>
-                  <td className="border px-4 py-2">{workout.saha}</td>
-                  <td className="border px-4 py-2">{workout.antrenor}</td>
-                  <td className="border px-4 py-2">{workout.periyot}</td>
+                  <td className="border px-4 py-2">{workout.ucret} TL</td>
+                  <td className="border px-4 py-2">
+                    {workout.odeme.aylik
+                      ? "Aylık"
+                      : workout.odeme.tekSeferlik
+                      ? "Tek Seferlik"
+                      : "Belirtilmemiş"}
+                  </td>
+                  <td className="border px-4 py-2">{workout.odemeTarihi}</td>
                 </tr>
               ))}
             </tbody>
@@ -160,7 +161,7 @@ const AntremanlarPage = () => {
       {isModalOpen && (
         <YeniAntrenmanModal
           onClose={() => setIsModalOpen(false)}
-          onSave={handleAddWorkout} // Yeni antrenman kaydını işleme
+          onSave={handleAddWorkout}
         />
       )}
     </div>
