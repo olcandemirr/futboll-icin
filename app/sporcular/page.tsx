@@ -10,10 +10,10 @@ const SporcularPage = () => {
   const [isYeniGrupModalOpen, setIsYeniGrupModalOpen] = useState(false);
   const [sporcular, setSporcular] = useState([
     {
-      ad: "Yağız Çelik",
+      ad: "Olcan Demir",
       durum: "Aktif",
       id: 1001,
-      resim: "/images/yagiz.jpg",
+      resim: "/olcan.png",
       bilgi: "Yağız, futbol takımında bir kaptandır. 3 yıldır aktif sporcudur.",
     },
     {
