@@ -9,6 +9,7 @@ interface YeniKayitModalProps {
     gender: string;
     branch: string;
     contact: { relation: string; phone: string };
+    guardians: { relation: string; phone: string }[];
   }) => void;
 }
 
@@ -18,23 +19,42 @@ const YeniKayitModal: React.FC<YeniKayitModalProps> = ({ onClose, onSave }) => {
     gender: "",
     branch: "",
     contact: { relation: "Kendisi", phone: "" },
+    guardians: [
+      { relation: "Anne", phone: "" },
+      { relation: "Baba", phone: "" },
+    ],
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+
     if (name.startsWith("contact.")) {
       const contactField = name.split(".")[1];
       setFormData((prev) => ({
         ...prev,
         contact: { ...prev.contact, [contactField]: value },
       }));
+    } else if (name.startsWith("guardians.")) {
+      const [_, index, field] = name.split(".");
+      setFormData((prev) => {
+        const updatedGuardians = [...prev.guardians];
+        // `as keyof { relation: string; phone: string }` ile dizin türünü belirtin
+        updatedGuardians[parseInt(index)][field as keyof { relation: string; phone: string }] = value;
+        return { ...prev, guardians: updatedGuardians };
+      });
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
   const handleSubmit = () => {
-    if (!formData.name || !formData.gender || !formData.branch || !formData.contact.phone) {
+    if (
+      !formData.name ||
+      !formData.gender ||
+      !formData.branch ||
+      !formData.contact.phone ||
+      formData.guardians.some((guardian) => !guardian.phone)
+    ) {
       alert("Lütfen tüm alanları doldurun!");
       return;
     }
@@ -49,15 +69,12 @@ const YeniKayitModal: React.FC<YeniKayitModalProps> = ({ onClose, onSave }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white w-full max-w-4xl p-6 rounded-lg shadow-lg">
-        {/* Başlık */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold">Yeni Sporcu Kaydı</h2>
           <button onClick={onClose} className="text-red-500">
             <FaTimes className="text-2xl" />
           </button>
         </div>
-
-        {/* Form */}
         <form className="grid grid-cols-2 gap-4">
           {/* Genel Bilgiler */}
           <div>
@@ -137,6 +154,56 @@ const YeniKayitModal: React.FC<YeniKayitModalProps> = ({ onClose, onSave }) => {
                 className="border p-2 w-full"
                 placeholder="Telefon"
                 value={formData.contact.phone}
+                onChange={handleChange}
+              />
+            </div>
+
+            {/* Veli 1 */}
+            <h3 className="text-lg font-bold mt-4">Veli 1 Bilgisi</h3>
+            <div className="mb-3">
+              <label className="block text-gray-700">Yakınlık</label>
+              <input
+                type="text"
+                name="guardians.0.relation"
+                className="border p-2 w-full"
+                placeholder="Örn: Anne"
+                value={formData.guardians[0].relation}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="mb-3">
+              <label className="block text-gray-700">Telefon</label>
+              <input
+                type="text"
+                name="guardians.0.phone"
+                className="border p-2 w-full"
+                placeholder="Telefon"
+                value={formData.guardians[0].phone}
+                onChange={handleChange}
+              />
+            </div>
+
+            {/* Veli 2 */}
+            <h3 className="text-lg font-bold mt-4">Veli 2 Bilgisi</h3>
+            <div className="mb-3">
+              <label className="block text-gray-700">Yakınlık</label>
+              <input
+                type="text"
+                name="guardians.1.relation"
+                className="border p-2 w-full"
+                placeholder="Örn: Baba"
+                value={formData.guardians[1].relation}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="mb-3">
+              <label className="block text-gray-700">Telefon</label>
+              <input
+                type="text"
+                name="guardians.1.phone"
+                className="border p-2 w-full"
+                placeholder="Telefon"
+                value={formData.guardians[1].phone}
                 onChange={handleChange}
               />
             </div>

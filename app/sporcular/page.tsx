@@ -37,10 +37,13 @@ const SporcularPage = () => {
   const [sporcuAra, setSporcuAra] = useState("");
   const [hoveredSporcu, setHoveredSporcu] = useState<null | string>(null);
 
-  const telefonDefteri: { [key: string]: string } = {
-    "Yağız Çelik": "5551234567",
-    "Murat Aydın": "5338532521",
-    "Selin Yılmaz": "5556543210",
+  // Üyeyi sil ve "Pasif" durumuna geçir
+  const handleUyeSil = (id: number) => {
+    setSporcular((prev) =>
+      prev.map((sporcu) =>
+        sporcu.id === id ? { ...sporcu, durum: "Pasif" } : sporcu
+      )
+    );
   };
 
   const filtrelenmisSporcular = sporcular.filter(
@@ -49,46 +52,8 @@ const SporcularPage = () => {
       sporcu.durum === durum
   );
 
-  // Arama boşsa tüm sporcuları göster
   const gosterilecekSporcular =
     sporcuAra.trim() === "" ? sporcular.filter((sporcu) => sporcu.durum === durum) : filtrelenmisSporcular;
-
-  const handleGrupEkle = (grupAdi: string, secilenKisiler: string[]) => {
-    setGruplar((prev) => [...prev, { ad: grupAdi, kisiler: secilenKisiler }]);
-    setIsYeniGrupModalOpen(false); // Modal'ı kapat
-  };
-
-  const handleYeniSporcuKaydet = (newAthlete: {
-    id: number;
-    name: string;
-    gender: string;
-    branch: string;
-    contact: { relation: string; phone: string };
-  }) => {
-    setSporcular((prev) => [
-      ...prev,
-      {
-        ad: newAthlete.name,
-        durum: "Aktif", // Varsayılan durum
-        id: newAthlete.id,
-        resim: "/images/default.jpg", // Varsayılan resim
-        bilgi: `${newAthlete.name} yeni bir sporcudur ve ${newAthlete.branch} branşında kayıtlıdır.`,
-      },
-    ]);
-    setIsModalOpen(false); // Modal'ı kapat
-  };
-
-  const handleSmsGonder = () => {
-    if (aktifGrup && mesaj.trim() !== "") {
-      const telefonlar = aktifGrup.kisiler.map(
-        (kisi) => telefonDefteri[kisi] || "Bilinmiyor"
-      );
-      alert(`Mesaj Gönderildi:\nTelefonlar: ${telefonlar.join(", ")}`);
-      setMesaj("");
-    } else {
-      alert("Lütfen bir mesaj yazın ve grup seçin.");
-    }
-  };
 
   return (
     <div className="flex h-full">
@@ -154,9 +119,17 @@ const SporcularPage = () => {
                 key={sporcu.id}
                 onMouseEnter={() => setHoveredSporcu(sporcu.ad)}
                 onMouseLeave={() => setHoveredSporcu(null)}
-                className="relative p-4 border rounded hover:bg-gray-50 cursor-pointer"
+                className="relative p-4 border rounded hover:bg-gray-50"
               >
-                {sporcu.ad}
+                <div className="flex justify-between items-center">
+                  <span>{sporcu.ad}</span>
+                  <button
+                    onClick={() => handleUyeSil(sporcu.id)}
+                    className="bg-red-500 text-white text-sm px-4 py-1 rounded hover:bg-red-600"
+                  >
+                    Sil
+                  </button>
+                </div>
                 {hoveredSporcu === sporcu.ad && (
                   <div className="absolute top-0 left-20 w-64 bg-white shadow-lg p-4 rounded-lg z-10">
                     <Image
@@ -181,55 +154,31 @@ const SporcularPage = () => {
             <p className="text-sm text-gray-500">Sonuç bulunamadı.</p>
           )}
         </div>
-
-        {/* Gruplar */}
-        <div className="mt-8">
-          <h3 className="text-lg font-semibold">Gruplar:</h3>
-          {gruplar.length > 0 ? (
-            gruplar.map((grup, index) => (
-              <div
-                key={index}
-                onClick={() => setAktifGrup(grup)}
-                className="p-4 border rounded hover:bg-gray-100 cursor-pointer"
-              >
-                {grup.ad}
-              </div>
-            ))
-          ) : (
-            <p className="text-sm text-gray-500">Henüz bir grup oluşturulmadı.</p>
-          )}
-        </div>
-
-        {/* Aktif Grup ve Mesaj Gönderimi */}
-        {aktifGrup && (
-          <div className="mt-6">
-            <h4 className="text-lg font-bold">Mesaj Gönder: {aktifGrup.ad}</h4>
-            <textarea
-              className="w-full border p-2 rounded"
-              value={mesaj}
-              onChange={(e) => setMesaj(e.target.value)}
-              placeholder="Mesajınızı buraya yazın..."
-            ></textarea>
-            <button
-              onClick={handleSmsGonder}
-              className="bg-blue-500 text-white px-4 py-2 rounded mt-2 hover:bg-blue-600"
-            >
-              Gönder
-            </button>
-          </div>
-        )}
       </div>
 
       {isModalOpen && (
         <YeniKayitModal
           onClose={() => setIsModalOpen(false)}
-          onSave={handleYeniSporcuKaydet}
+          onSave={(newAthlete) =>
+            setSporcular((prev) => [
+              ...prev,
+              {
+                ad: newAthlete.name,
+                durum: "Aktif",
+                id: newAthlete.id,
+                resim: "/images/default.jpg",
+                bilgi: `${newAthlete.name} yeni bir sporcudur.`,
+              },
+            ])
+          }
         />
       )}
       {isYeniGrupModalOpen && (
         <YeniGrupModal
           onClose={() => setIsYeniGrupModalOpen(false)}
-          onGrupEkle={handleGrupEkle}
+          onGrupEkle={(grupAdi, secilenKisiler) => {
+            setGruplar((prev) => [...prev, { ad: grupAdi, kisiler: secilenKisiler }]);
+          }}
         />
       )}
     </div>

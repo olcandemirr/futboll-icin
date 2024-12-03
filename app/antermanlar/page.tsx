@@ -13,6 +13,7 @@ interface AntrenmanData {
   saat: string;
   ucret: string;
   odemeTarihi: string;
+  malzeme: string; // Verilen Malzeme
 }
 
 const AntremanlarPage = () => {
@@ -32,6 +33,7 @@ const AntremanlarPage = () => {
       saat: "10:00 - 11:30",
       ucret: "500",
       odemeTarihi: "2024-01-10",
+      malzeme: "Top, Forma",
     },
     {
       brans: "Basketbol",
@@ -41,6 +43,7 @@ const AntremanlarPage = () => {
       saat: "14:00 - 15:30",
       ucret: "750",
       odemeTarihi: "2024-02-15",
+      malzeme: "Basketbol Topu, Şort",
     },
   ]);
 
@@ -132,6 +135,7 @@ const AntremanlarPage = () => {
                 <th className="border px-4 py-2">Ay</th>
                 <th className="border px-4 py-2">Saat</th>
                 <th className="border px-4 py-2">Ücret</th>
+                <th className="border px-4 py-2">Malzeme</th>
                 <th className="border px-4 py-2">Ödeme Tipi</th>
                 <th className="border px-4 py-2">Ödeme Tarihi</th>
               </tr>
@@ -144,6 +148,7 @@ const AntremanlarPage = () => {
                   <td className="border px-4 py-2">{workout.ay}</td>
                   <td className="border px-4 py-2">{workout.saat}</td>
                   <td className="border px-4 py-2">{workout.ucret} TL</td>
+                  <td className="border px-4 py-2">{workout.malzeme}</td>
                   <td className="border px-4 py-2">
                     {workout.odeme.aylik
                       ? "Aylık"
@@ -155,6 +160,7 @@ const AntremanlarPage = () => {
                 </tr>
               ))}
             </tbody>
+            
           </table>
         </section>
       </div>
